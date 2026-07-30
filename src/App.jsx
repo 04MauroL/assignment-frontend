@@ -13,11 +13,11 @@ function App() {
 
     const setPostDetails = (postId) => {
         setPost(posts.find(post => post.id === postId))
-        setFilteredPosts(posts)
     }
 
     const onPostClose = () => {
         setPost(null)
+        setFilteredPosts(posts)
     }
 
     const onSearchChange = (event) => {
