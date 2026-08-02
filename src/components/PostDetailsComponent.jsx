@@ -15,7 +15,10 @@ function PostDetailsComponent({post, onPostClose}) {
                 return response.json()
             })
             .then(data => setComments(data))
-            .catch(error => console.log("Fout tijdens ophalen comments: ", error))
+            .catch(error => {
+                if (error.name === "AbortError") return;
+                console.log("Fout tijdens ophalen comments: ", error)
+            })
 
         return ()=> controller.abort()
     }, [post.id])

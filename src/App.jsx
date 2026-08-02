@@ -8,7 +8,7 @@ function App() {
     const searchTimeoutId = useRef(null);
 
     const [posts, setPosts] = useState([])
-    const [filteredPosts, setFilteredPosts] = useState([])
+    const [searchTerm, setSearchTerm] = useState('')
     const [post, setPost] = useState(null)
 
     const setPostDetails = (postId) => {
@@ -17,18 +17,20 @@ function App() {
 
     const onPostClose = () => {
         setPost(null)
-        setFilteredPosts(posts)
+        setSearchTerm('')
     }
+
+    const filteredPosts = posts.filter(p =>
+        p.title.toLowerCase().includes(searchTerm)
+    );
 
     const onSearchChange = (event) => {
         clearTimeout(searchTimeoutId.current)
         const searchTerm = event.target.value.toLowerCase()
 
-        const timeoutId = setTimeout(() => {
-            setFilteredPosts(posts.filter(post => post.title.toLowerCase().includes(searchTerm)))
+        searchTimeoutId.current = setTimeout(() => {
+            setSearchTerm(searchTerm)
         }, searchDebounceTimeMs)
-
-        searchTimeoutId.current = timeoutId
     }
 
     useEffect(() => {
@@ -44,9 +46,11 @@ function App() {
             })
             .then(data => {
                 setPosts(data)
-                setFilteredPosts(data)
             })
-            .catch(error => console.log("Fout tijdens ophalen posts: ", error))
+            .catch(error => {
+                if (error.name === "AbortError") return;
+                console.log("Fout tijdens ophalen posts: ", error)
+            })
 
         return () => controller.abort()
     }, [])
