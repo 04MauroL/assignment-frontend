@@ -1,5 +1,5 @@
 import './App.css'
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useRef, useState, useMemo} from "react";
 import PostsListComponent from "./components/PostsListComponent.jsx";
 import PostDetailsComponent from "./components/PostDetailsComponent.jsx";
 
@@ -20,9 +20,11 @@ function App() {
         setSearchTerm('')
     }
 
-    const filteredPosts = posts.filter(p =>
-        p.title.toLowerCase().includes(searchTerm)
-    );
+    const filteredPosts = useMemo(() => {
+        return posts.filter(post =>
+            post.title.toLowerCase().includes(searchTerm)
+        );
+    }, [posts, searchTerm]);
 
     const onSearchChange = (event) => {
         clearTimeout(searchTimeoutId.current)
