@@ -5,7 +5,13 @@ function PostDetailsComponent({post, onPostClose}) {
 
     useEffect(() => {
         fetch(`https://jsonplaceholder.typicode.com/posts/${post.id}/comments`)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Fout tijdens ophalen comments")
+                }
+
+                return response.json()
+            })
             .then(data => setComments(data))
             .catch(error => console.log("Fout tijdens ophalen comments: ", error))
     }, [post.id])
