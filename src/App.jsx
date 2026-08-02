@@ -32,7 +32,9 @@ function App() {
     }
 
     useEffect(() => {
-        fetch("https://jsonplaceholder.typicode.com/posts")
+        const controller = new AbortController()
+
+        fetch("https://jsonplaceholder.typicode.com/posts", {signal: controller.signal})
             .then(response =>{
                 if (!response.ok) {
                     throw new Error("Fout tijdens ophalen posts")
@@ -45,6 +47,8 @@ function App() {
                 setFilteredPosts(data)
             })
             .catch(error => console.log("Fout tijdens ophalen posts: ", error))
+
+        return () => controller.abort()
     }, [])
 
     return (

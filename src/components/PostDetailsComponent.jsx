@@ -4,7 +4,9 @@ function PostDetailsComponent({post, onPostClose}) {
     const [comments, setComments] = useState([])
 
     useEffect(() => {
-        fetch(`https://jsonplaceholder.typicode.com/posts/${post.id}/comments`)
+        const controller = new AbortController()
+
+        fetch(`https://jsonplaceholder.typicode.com/posts/${post.id}/comments`, {signal: controller.signal})
             .then(response => {
                 if (!response.ok) {
                     throw new Error("Fout tijdens ophalen comments")
@@ -14,6 +16,8 @@ function PostDetailsComponent({post, onPostClose}) {
             })
             .then(data => setComments(data))
             .catch(error => console.log("Fout tijdens ophalen comments: ", error))
+
+        return ()=> controller.abort()
     }, [post.id])
 
     return (
